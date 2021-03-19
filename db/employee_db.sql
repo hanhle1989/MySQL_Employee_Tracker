@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS employee_db;
+
 CREATE DATABASE employee_db;
 
 USE employee_db;
@@ -11,7 +13,7 @@ PRIMARY KEY (id)
 CREATE TABLE role (
 id INT NOT NULL AUTO_INCREMENT,
 title VARCHAR(30) NOT NULL,
-salary DECIMAL(6,2) NOT NULL,
+salary DECIMAL(20,2) NOT NULL,
 department_id INT NOT NULL,
 PRIMARY KEY (id),
 FOREIGN KEY(department_id)
@@ -32,3 +34,5 @@ REFERENCES role(id),
 FOREIGN KEY(manager_id)
 REFERENCES employee(id)
 );
+
+SELECT * FROM department
