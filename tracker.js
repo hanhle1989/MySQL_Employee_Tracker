@@ -28,13 +28,44 @@ function start(){
       "View all departments",
       "View all roles",
       "View all employees",
-      "Update an employee's role",
-      "Update employee's manager",
+      "Update an employee role",
+      "Update employee manager",
       "View employees by manager",
       "Delete a department",
       "Delete a role",
       "Delete an employee",
-      "Done"
+      "Exit"
     ]
   })
+
+  .then(function(answer) {
+    if (answer.action === 'Add a new department') {
+      addDepartment();
+    } else if (answer.action === 'Add a new role') {
+      addRole();
+    } else if (answer.action === 'Add a new employee') {  
+      addEmployee();   
+    } else if (answer.action === 'View all departments') { 
+      viewDepartments();
+    } else if (answer.action === 'View all roles') { 
+      viewRoles()
+    } else if (answer.action === 'View all employees') { 
+      viewEmployees()
+    } else if (answer.action === 'Update an employee role') { 
+      updateRole();
+    } else if (answer.action === 'Update an employee manager') { 
+      updateManager();
+    } else if (answer.action === 'View an employee by manager') { 
+      viewByManager();
+    } else if (answer.action === 'Delete a department') { 
+      deleteDepartment();
+    } else if (answer.action === 'Delete a role') { 
+      deleteRole();
+    } else if (answer.action === 'Delete an employee') { 
+      deleteEmployee();
+    } else if (answer.action === 'Exit') {
+      connection.end()
+    }
+  })
 }
+
