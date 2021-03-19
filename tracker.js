@@ -15,3 +15,26 @@ connection.connect(function(err) {
     start();
 })
 
+function start(){
+  inquirer
+  .prompt({
+    name: "action",
+    type: "list",
+    message: "Please choose an action from the following menu:",
+    choices: [
+      "Add a new department",
+      "Add a new role",
+      "Add a new employee",
+      "View all departments",
+      "View all roles",
+      "View all employees",
+      "Update an employee's role",
+      "Update employee's manager",
+      "View employees by manager",
+      "Delete a department",
+      "Delete a role",
+      "Delete an employee",
+      "Done"
+    ]
+  })
+}
