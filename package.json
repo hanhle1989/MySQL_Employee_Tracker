@@ -1,0 +1,15 @@
+{
+  "name": "mysql-employee-tracker",
+  "version": "1.0.0",
+  "description": "build an employee tracker using MySQL",
+  "main": "tracker.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Hanh",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  }
+}
