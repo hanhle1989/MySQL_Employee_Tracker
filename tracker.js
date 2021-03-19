@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const inquirer = require('inquirer');
 
 const connection = mysql.createConnection({
   host: 'localhost',
@@ -22,12 +23,12 @@ function start() {
       type: "list",
       message: "Please choose an action from the following menu:",
       choices: [
-        "Add a new department",
-        "Add a new role",
-        "Add a new employee",
         "View all departments",
         "View all roles",
         "View all employees",
+        "Add a new department",
+        "Add a new role",
+        "Add a new employee",
         "Update an employee role",
         "Update employee manager",
         "View employees by manager",
@@ -69,6 +70,44 @@ function start() {
     })
 }
 
+function viewDepartments() {
+
+}
+
+
+
+function viewRoles() {
+
+}
+
+
+
+function viewEmployees() {
+
+}
+
+
+
+function addDepartment() {
+  inquirer
+  .prompt({
+      name: "department",
+      type: "input",
+      message: "What is the name of the new department?",
+  })
+  .then(function (answer) {
+      var query = "INSERT INTO department (name) VALUES ( ? )";
+      connection.query(query, answer.department, function (err, res) {
+          console.log(`${(answer.department).toUpperCase()} Department has been added.`)
+      })
+      viewDepartments();
+
+      start();
+  })
+}
+
+
+
 function addRole() {
   connection.query('SELECT * FROM department', function (err, res) {
     if (err) throw err;
@@ -77,17 +116,31 @@ function addRole() {
         {
           name: "title",
           type: "input",
-          message: "What is the new role?",
+          message: "What is the new role called?",
+          validate: function (answer) {
+            if (answer === "") {
+              return console.log("Role cannot be blank")
+            } else {
+              return true;
+            }
+          }
         },
         {
           name: "salary",
           type: "input",
-          message: "What is the new role's salary?",
+          message: "What is this new role's salary?",
+          validate: function (answer) {
+            if (answer === "") {
+              return console.log("Please enter salary")
+            } else {
+              return true;
+            }
+          }
         },
         {
           name: "departmentName",
           type: "list",
-          message: "Whuch department does this new role be under?",
+          message: "Which department does this new role be under?",
           choices: function () {
             var choicesArray = [];
             res.forEach(res => {
@@ -99,12 +152,33 @@ function addRole() {
           }
         },
       ])
+
+      // get ID from department table
+      .then(function (answer) {
+        const department = answer.departmentName;
+        connection.query('SELECT * FROM DEPARTMENT', function (err, res) {
+
+          if (err) throw (err);
+          let filteredDept = res.filter(function (res) {
+            return res.name == department;
+          }
+          )
+
+          let id = filteredDept[0].id;
+          let query = "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)";
+          let values = [answer.title, parseInt(answer.salary), id]
+          console.log(values);
+
+          connection.query(query, values,
+            function (err, res, fields) {
+              console.log(`${(values[0]).toUpperCase()} role has been added.`)
+            })
+          viewRoles()
+
+          start();
+        })
+      })
   })
-}
-
-
-function addDepartment() {
-
 }
 
 
@@ -112,20 +186,6 @@ function addEmployee() {
 
 }
 
-
-function viewDepartments() {
-
-}
-
-
-function viewRoles() {
-
-}
-
-
-function viewEmployees() {
-
-}
 
 
 function updateRole() {
@@ -156,6 +216,3 @@ function deleteRole() {
 function deleteEmployee() {
 
 }
-
-
-
