@@ -70,62 +70,91 @@ function start() {
 }
 
 function addRole() {
-
+  connection.query('SELECT * FROM department', function (err, res) {
+    if (err) throw err;
+    inquirer
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What is the new role?",
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is the new role's salary?",
+        },
+        {
+          name: "departmentName",
+          type: "list",
+          message: "Whuch department does this new role be under?",
+          choices: function () {
+            var choicesArray = [];
+            res.forEach(res => {
+              choicesArray.push(
+                res.name
+              );
+            })
+            return choicesArray;
+          }
+        },
+      ])
+  })
 }
 
 
 function addDepartment() {
-  
+
 }
 
 
 function addEmployee() {
-  
+
 }
 
 
 function viewDepartments() {
-  
+
 }
 
 
 function viewRoles() {
-  
+
 }
 
 
 function viewEmployees() {
-  
+
 }
 
 
 function updateRole() {
-  
+
 }
 
 
 function updateManager() {
-  
+
 }
 
 
 function viewByManager() {
-  
+
 }
 
 
 function deleteDepartment() {
-  
+
 }
 
 
 function deleteRole() {
-  
+
 }
 
 
 function deleteEmployee() {
-  
+
 }
 
 
