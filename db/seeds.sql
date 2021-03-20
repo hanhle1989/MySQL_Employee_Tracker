@@ -25,5 +25,3 @@ VALUES ("Lisa", "Campell", 1),
 ("Joe", "Morris", 4),
 ("Daniel", "Seger", 3),
 ("Sheri", "Pana", 1);
-
-SELECT * FROM employee;

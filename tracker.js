@@ -5,11 +5,11 @@ const connection = mysql.createConnection({
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'password999!',
+  password: 'password',
   database: 'employee_db',
 });
 
-connection.connect(function (err) {
+connection.connect((err) => {
   if (err) throw err;
   console.log(`connected as id ${connection.threadId}`);
 
@@ -40,18 +40,18 @@ function start() {
     })
 
     .then(function (answer) {
-      if (answer.action === 'Add a new department') {
+      if (answer.action === 'View all departments') {
+        viewDepartments();
+      } else if (answer.action === 'View all roles') {
+        viewRoles();
+      } else if (answer.action === 'View all employees') {
+        viewEmployees();
+      } else if (answer.action === 'Add a new department') {
         addDepartment();
       } else if (answer.action === 'Add a new role') {
         addRole();
       } else if (answer.action === 'Add a new employee') {
         addEmployee();
-      } else if (answer.action === 'View all departments') {
-        viewDepartments();
-      } else if (answer.action === 'View all roles') {
-        viewRoles()
-      } else if (answer.action === 'View all employees') {
-        viewEmployees()
       } else if (answer.action === 'Update an employee role') {
         updateRole();
       } else if (answer.action === 'Update an employee manager') {
@@ -71,40 +71,64 @@ function start() {
 }
 
 function viewDepartments() {
+  var query = "SELECT * FROM department";
+  connection.query(query, function (err, res) {
+    console.log(`DEPARTMENTS:`)
+    res.forEach(department => {
+      console.log(`Department ID: ${department.id} | ${department.name}`)
+    })
 
-}
+    start();
+  });
+};
 
 
 
 function viewRoles() {
+  var query = "SELECT * FROM role";
+  connection.query(query, function (err, res) {
+    console.log(`ROLES:`)
+    res.forEach(role => {
+      console.log(`Department ID: ${role.department_id} | ${role.title} ($${role.salary}/year)`)
+    })
 
-}
+    start();
+  });
+};
 
 
 
 function viewEmployees() {
+  var query = "SELECT * FROM employee";
+  connection.query(query, function (err, res) {
+    console.log(`ROLES:`)
+    res.forEach(employee => {
+      console.log(`Department ID: ${employee.id} | ${employee.first_name} ${employee.last_name}`)
+    })
 
-}
+    start();
+  });
+};
 
 
 
 function addDepartment() {
   inquirer
-  .prompt({
+    .prompt({
       name: "department",
       type: "input",
       message: "What is the name of the new department?",
-  })
-  .then(function (answer) {
+    })
+    .then(function (answer) {
       var query = "INSERT INTO department (name) VALUES ( ? )";
       connection.query(query, answer.department, function (err, res) {
-          console.log(`${(answer.department).toUpperCase()} Department has been added.`)
+        console.log(`${(answer.department).toUpperCase()} Department has been added.`)
       })
       viewDepartments();
 
       start();
-  })
-}
+    })
+};
 
 
 
@@ -179,40 +203,40 @@ function addRole() {
         })
       })
   })
-}
+};
 
 
 function addEmployee() {
 
-}
+};
 
 
 
 function updateRole() {
 
-}
+};
 
 
 function updateManager() {
 
-}
+};
 
 
 function viewByManager() {
 
-}
+};
 
 
 function deleteDepartment() {
 
-}
+};
 
 
 function deleteRole() {
 
-}
+};
 
 
 function deleteEmployee() {
 
-}
+};

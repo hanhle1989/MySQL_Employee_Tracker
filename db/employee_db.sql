@@ -35,4 +35,3 @@ FOREIGN KEY(manager_id)
 REFERENCES employee(id)
 );
 
-SELECT * FROM department
