@@ -197,7 +197,56 @@ const addRole = () => {
 
 
 const addEmployee = () => {
+  connection.query('SELECT * FROM role', (err, res) => {
+    if (err) throw (err);
+    inquirer
+      .prompt(
+        [
+          {
+            name: "firstName",
+            type: "input",
+            message: "What is the new employee's first name?",
+            validate: function (answer) {
+              if (answer === "") {
+                return console.log("First Name cannot be blank")
+              } else {
+                return true;
+              }
+            }
+          },
+          {
+            name: "lastName",
+            type: "input",
+            message: "What is the new employee's last name?",
+            validate: function (answer) {
+              if (answer === "") {
+                return console.log("Last Name cannot be blank")
+              } else {
+                return true;
+              }
+            }
+          },
+          {
+            name: "roleName",
+            type: "list",
+            message: "What is the new employee's title?",
+            choices: function titleName() {
+              var roleArray = [];
+              res.forEach(res => {
+                choicesArray.push(
+                  res.title
+                );
+              })
+              return roleArray;
+            }
+          }
+        ]
+      )
 
+
+
+
+  })
 };
 
 
