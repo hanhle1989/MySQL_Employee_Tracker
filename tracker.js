@@ -120,7 +120,7 @@ const addDepartment = () => {
       )
 
       .then((answer) => {
-        connection.query('INSERT INTO department (name) VALUES (?)', answer.newDepartment, (err, res) => {
+        connection.query('INSERT INTO department (depname) VALUES (?)', [answer.newDepartment], (err, res) => {
           if (err) throw err
           console.log(`New department has been added.`)
           start();
@@ -169,7 +169,7 @@ const addRole = () => {
               var choicesArray = [];
               res.forEach(res => {
                 choicesArray.push(
-                  res.name
+                  res.depname
                 );
               })
               return choicesArray;
@@ -183,7 +183,7 @@ const addRole = () => {
         connection.query('SELECT * FROM department', (err, res) => {
           if (err) throw (err);
           let filteredDept = res.filter(function (res) {
-            return res.name == department;
+            return res.depname == department;
           }
           )
           let id = filteredDept[0].id;
