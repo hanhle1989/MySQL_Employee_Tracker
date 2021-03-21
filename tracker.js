@@ -66,11 +66,7 @@ function start() {
 
 const viewDepartments = () => {
   connection.query("SELECT * FROM department", (err, res) => {
-    if (err) throw err;
-    res.forEach(department => {
-      console.log(`Department ID: ${department.id} | ${department.name}`)
-    })
-
+    console.table(res);
     start();
   });
 };
@@ -80,9 +76,7 @@ const viewDepartments = () => {
 const viewRoles = () => {
   connection.query("SELECT * FROM role", (err, res) => {
     if (err) throw err;
-    res.forEach(role => {
-      console.log(`Department ID: ${role.department_id} | Role ID: ${role.id} | ${role.title} ($${role.salary}/year)`)
-    })
+    console.table(res);
 
     start();
   });
@@ -93,10 +87,7 @@ const viewRoles = () => {
 const viewEmployees = () => {
   connection.query("SELECT * FROM employee", (err, res) => {
     if (err) throw err;
-    res.forEach(employee => {
-      console.log(`Role ID: ${employee.role_id} | ${employee.first_name} ${employee.last_name}`)
-    })
-
+    console.table(res);
     start();
   });
 };
