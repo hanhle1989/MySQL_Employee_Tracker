@@ -74,7 +74,13 @@ const viewDepartments = () => {
 
 
 const viewRoles = () => {
-  connection.query("SELECT * FROM role", (err, res) => {
+  const query = `
+  SELECT title, salary, depname
+  FROM role
+  right JOIN department
+  ON role.department_id = department.id`;
+
+  connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
 
@@ -85,7 +91,15 @@ const viewRoles = () => {
 
 
 const viewEmployees = () => {
-  connection.query("SELECT * FROM employee", (err, res) => {
+  const query = `
+  SELECT first_name, last_name, title, salary, depname
+  FROM employee
+  JOIN role
+  ON employee.role_id = role.id
+  JOIN department
+  ON role.department_id = department.id`;
+
+  connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
     start();

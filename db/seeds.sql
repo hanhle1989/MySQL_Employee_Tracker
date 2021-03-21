@@ -20,4 +20,4 @@ VALUES ("Lisa", "Campell", 1),
 ("Jessica", "Hampton", 3),
 ("Hanh", "Le", 4),
 ("Joe", "Morris", 5),
-("Daniel", "Seger", 6)
+("Daniel", "Seger", 6);
