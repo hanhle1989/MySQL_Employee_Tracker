@@ -233,7 +233,7 @@ const addEmployee = () => {
             choices: function titleName() {
               var roleArray = [];
               res.forEach(res => {
-                choicesArray.push(
+                roleArray.push(
                   res.title
                 );
               })
@@ -243,13 +243,54 @@ const addEmployee = () => {
         ]
       )
 
+      .then((answer) => {
+        const role = answer.roleName;
+        connection.query('SELECT * FROM role', (err, res) => {
+          if (err) throw err;
+          let filteredRole = res.filter(function (res) {
+            return res.title == role;
+          })
+          let role_id = filteredRole[0].id;
+          connection.query("SELECT * FROM employee", function (err, res) {
+            inquirer
+              .prompt([
+                {
+                  name: "manager",
+                  type: "list",
+                  message: "Who is your manager?",
+                  choices: function () {
+                    managersArray = []
+                    res.forEach(res => {
+                      managersArray.push(
+                        res.last_name)
 
+                    })
+                    return managersArray;
+                  }
+                }
+              ])
+              .then(function (managerAnswer) {
+                const manager = managerAnswer.manager;
+                connection.query('SELECT * FROM employee', function (err, res) {
+                  if (err) throw (err);
+                  let filteredManager = res.filter(function (res) {
+                    return res.last_name == manager;
+                  })
+                  let manager_id = filteredManager[0].id;
 
+                  connection.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answer.firstName, answer.lastName, role_id, manager_id], (err, res, fields) => {
 
+                    console.log(`New employee has been added`)
+
+                    start();
+                  })
+                })
+              })
+          })
+        })
+      })
   })
 };
-
-
 
 const updateRole = () => {
 
