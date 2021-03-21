@@ -160,7 +160,7 @@ const addRole = () => {
             name: "departmentChoice",
             type: "list",
             message: "Which department does this role belong to?",
-            choices: function departmentName() {
+            choices: function () {
               var choicesArray = [];
               res.forEach(res => {
                 choicesArray.push(
@@ -230,7 +230,7 @@ const addEmployee = () => {
             name: "roleName",
             type: "list",
             message: "What is the new employee's title?",
-            choices: function titleName() {
+            choices: function () {
               var roleArray = [];
               res.forEach(res => {
                 roleArray.push(
@@ -292,8 +292,70 @@ const addEmployee = () => {
   })
 };
 
-const updateRole = () => {
 
+
+const updateRole = () => {
+  connection.query('SELECT * FROM employee', (err, result) => {
+    if (err) throw (err);
+    inquirer
+      .prompt(
+        [
+          {
+            name: "employeeName",
+            type: "list",
+            message: "Which employee needs to update their role?",
+            choices: function () {
+              employeeArray = [];
+              result.forEach(result => {
+                employeeArray.push(
+                  result.last_name
+                );
+              })
+              return employeeArray;
+            }
+          }
+        ]
+      )
+
+      .then((answer) => {
+        const last_name = answer.employeeName;
+        connection.query("SELECT * FROM role", function (err, res) {
+          inquirer
+            .prompt(
+              [
+                {
+                  name: "role",
+                  type: "list",
+                  message: "What is their new role?",
+                  choices: function () {
+                    rolesArray = [];
+                    res.forEach(res => {
+                      rolesArray.push(
+                        res.title)
+                    })
+                    return rolesArray;
+                  }
+                }
+              ]
+            )
+
+            .then(function (rolesAnswer) {
+              const role = rolesAnswer.role;
+
+              connection.query('SELECT * FROM role WHERE title = ?', [role], (err, res) => {
+                if (err) throw err;
+                let role_id = res[0].id;
+
+                connection.query('UPDATE employee SET role_id ? WHERE last_name', [role_id, last_name], (err, res, fields) => {
+                  console.log(`You have updated employee's role.`)
+                })
+
+                start();
+              })
+            })
+        })
+      })
+  })
 };
 
 
