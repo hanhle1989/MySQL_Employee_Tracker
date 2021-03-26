@@ -17,27 +17,26 @@ connection.connect((err) => {
 })
 
 function start() {
-  inquirer
-    .prompt({
-      name: "action",
-      type: "list",
-      message: "Please choose an action from the following menu:",
-      choices: [
-        "View all departments",
-        "View all roles",
-        "View all employees",
-        "Add a new department",
-        "Add a new role",
-        "Add a new employee",
-        "Update an employee role",
-        "Delete a department",
-        "Delete a role",
-        "Delete an employee",
-        "Exit"
-      ]
-    })
+  inquirer.prompt({
+    name: "action",
+    type: "list",
+    message: "Please choose an action from the following menu:",
+    choices: [
+      "View all departments",
+      "View all roles",
+      "View all employees",
+      "Add a new department",
+      "Add a new role",
+      "Add a new employee",
+      "Update an employee role",
+      "Delete a department",
+      "Delete a role",
+      "Delete an employee",
+      "Exit"
+    ]
+  })
 
-    .then(function (answer) {
+    .then((answer) => {
       if (answer.action === 'View all departments') {
         viewDepartments();
       } else if (answer.action === 'View all roles') {
@@ -75,9 +74,9 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
   const query = `
-  SELECT title, salary, depname
+  SELECT title, salary, department_name
   FROM role
-  right JOIN department
+  JOIN department
   ON role.department_id = department.id`;
 
   connection.query(query, (err, res) => {
@@ -92,7 +91,7 @@ const viewRoles = () => {
 
 const viewEmployees = () => {
   const query = `
-  SELECT first_name, last_name, title, salary, depname
+  SELECT first_name, last_name, title, salary, department_name
   FROM employee
   JOIN role
   ON employee.role_id = role.id
@@ -110,17 +109,16 @@ const viewEmployees = () => {
 
 const addDepartment = () => {
   connection.query(`SELECT * FROM department`, (err, res) => {
-    inquirer
-      .prompt(
-        {
-          name: "newDepartment",
-          type: "input",
-          message: "What is the name of the new department?",
-        }
-      )
+    inquirer.prompt(
+      {
+        name: "newDepartment",
+        type: "input",
+        message: "What is the name of the new department?",
+      }
+    )
 
       .then((answer) => {
-        connection.query('INSERT INTO department (depname) VALUES (?)', [answer.newDepartment], (err, res) => {
+        connection.query('INSERT INTO department (department_name) VALUES (?)', [answer.newDepartment], (err, res) => {
           if (err) throw err
           console.log(`New department has been added.`)
           start();
@@ -132,58 +130,57 @@ const addDepartment = () => {
 
 
 const addRole = () => {
-  connection.query('SELECT * FROM department', function (err, res) {
+  connection.query('SELECT * FROM department', (err, res) => {
     if (err) throw (err);
-    inquirer
-      .prompt(
-        [
-          {
-            name: "title",
-            type: "input",
-            message: "What is the new role called?",
-            validate: function (answer) {
-              if (answer === "") {
-                return console.log("Role cannot be blank")
-              } else {
-                return true;
-              }
+    inquirer.prompt(
+      [
+        {
+          name: "title",
+          type: "input",
+          message: "What is the new role called?",
+          validate: (answer) => {
+            if (answer === "") {
+              return console.log("Role cannot be blank")
+            } else {
+              return true;
             }
-          },
-          {
-            name: "salary",
-            type: "input",
-            message: "What is this new role's salary?",
-            validate: function (answer) {
-              if (answer === "") {
-                return console.log("Please enter salary")
-              } else {
-                return true;
-              }
+          }
+        },
+        {
+          name: "salary",
+          type: "input",
+          message: "What is this new role's salary?",
+          validate: (answer) => {
+            if (answer === "") {
+              return console.log("Please enter salary")
+            } else {
+              return true;
             }
-          },
-          {
-            name: "departmentChoice",
-            type: "list",
-            message: "Which department does this role belong to?",
-            choices: function () {
-              var choicesArray = [];
-              res.forEach(res => {
-                choicesArray.push(
-                  res.depname
-                );
-              })
-              return choicesArray;
-            }
-          },
-        ]
-      )
+          }
+        },
+        {
+          name: "departmentChoice",
+          type: "list",
+          message: "Which department does this role belong to?",
+          choices: function () {
+            var choicesArray = [];
+            res.forEach(res => {
+              choicesArray.push(
+                res.department_name
+              );
+            })
+            return choicesArray;
+          }
+        },
+      ]
+    )
 
       .then((answer) => {
         const department = answer.departmentChoice;
         connection.query('SELECT * FROM department', (err, res) => {
           if (err) throw (err);
-          let filteredDept = res.filter(function (res) {
-            return res.depname == department;
+          let filteredDept = res.filter((res) => {
+            return res.department_name == department;
           }
           )
           let id = filteredDept[0].id;
@@ -204,81 +201,79 @@ const addRole = () => {
 const addEmployee = () => {
   connection.query('SELECT * FROM role', (err, res) => {
     if (err) throw (err);
-    inquirer
-      .prompt(
-        [
-          {
-            name: "firstName",
-            type: "input",
-            message: "What is the new employee's first name?",
-            validate: function (answer) {
-              if (answer === "") {
-                return console.log("First Name cannot be blank")
-              } else {
-                return true;
-              }
-            }
-          },
-          {
-            name: "lastName",
-            type: "input",
-            message: "What is the new employee's last name?",
-            validate: function (answer) {
-              if (answer === "") {
-                return console.log("Last Name cannot be blank")
-              } else {
-                return true;
-              }
-            }
-          },
-          {
-            name: "roleName",
-            type: "list",
-            message: "What is the new employee's title?",
-            choices: function () {
-              var roleArray = [];
-              res.forEach(res => {
-                roleArray.push(
-                  res.title
-                );
-              })
-              return roleArray;
+    inquirer.prompt(
+      [
+        {
+          name: "firstName",
+          type: "input",
+          message: "What is the new employee's first name?",
+          validate: (answer) => {
+            if (answer === "") {
+              return console.log("First Name cannot be blank")
+            } else {
+              return true;
             }
           }
-        ]
-      )
+        },
+        {
+          name: "lastName",
+          type: "input",
+          message: "What is the new employee's last name?",
+          validate: (answer) => {
+            if (answer === "") {
+              return console.log("Last Name cannot be blank")
+            } else {
+              return true;
+            }
+          }
+        },
+        {
+          name: "roleName",
+          type: "list",
+          message: "What is the new employee's title?",
+          choices: function () {
+            var roleArray = [];
+            res.forEach(res => {
+              roleArray.push(
+                res.title
+              );
+            })
+            return roleArray;
+          }
+        }
+      ]
+    )
 
       .then((answer) => {
         const role = answer.roleName;
         connection.query('SELECT * FROM role', (err, res) => {
           if (err) throw err;
-          let filteredRole = res.filter(function (res) {
+          let filteredRole = res.filter((res) => {
             return res.title == role;
           })
           let role_id = filteredRole[0].id;
-          connection.query("SELECT * FROM employee", function (err, res) {
-            inquirer
-              .prompt([
-                {
-                  name: "manager",
-                  type: "list",
-                  message: "Who is your manager?",
-                  choices: function () {
-                    managersArray = []
-                    res.forEach(res => {
-                      managersArray.push(
-                        res.last_name)
+          connection.query("SELECT * FROM employee", (err, res) => {
+            inquirer.prompt([
+              {
+                name: "manager",
+                type: "list",
+                message: "Who is your manager?",
+                choices: function () {
+                  managersArray = []
+                  res.forEach(res => {
+                    managersArray.push(
+                      res.last_name)
 
-                    })
-                    return managersArray;
-                  }
+                  })
+                  return managersArray;
                 }
-              ])
-              .then(function (managerAnswer) {
+              }
+            ])
+              .then((managerAnswer) => {
                 const manager = managerAnswer.manager;
-                connection.query('SELECT * FROM employee', function (err, res) {
+                connection.query('SELECT * FROM employee', (err, res) => {
                   if (err) throw (err);
-                  let filteredManager = res.filter(function (res) {
+                  let filteredManager = res.filter((res) => {
                     return res.last_name == manager;
                   })
                   let manager_id = filteredManager[0].id;
@@ -298,85 +293,60 @@ const addEmployee = () => {
 };
 
 
-
 const updateRole = () => {
-  connection.query('SELECT * FROM employee', (err, result) => {
-    if (err) throw (err);
-    inquirer
-      .prompt(
-        [
-          {
-            name: "employeeName",
-            type: "list",
-            message: "Which employee needs to update their role?",
-            choices: function () {
-              employeeArray = [];
-              result.forEach(result => {
-                employeeArray.push(
-                  result.last_name
-                );
-              })
-              return employeeArray;
-            }
-          }
-        ]
-      )
+  connection.query("SELECT * FROM employee JOIN role ON employee.role_id = role.id", (err, res) => {
+    if (err) throw err;
+
+    inquirer.prompt(
+      {
+        name: "chosenEmployee",
+        type: "list",
+        message: "Which employee needs to update their role?",
+        choices: function () {
+          var emName = [];
+          res.forEach(res => {
+            emName.push(
+              `${res.id} ${res.first_name} ${res.last_name}, ${res.title}`
+            );
+          })
+
+          return emName;
+        }
+      })
 
       .then((answer) => {
-        const last_name = answer.employeeName;
-        connection.query("SELECT * FROM role", function (err, res) {
-          inquirer
-            .prompt(
-              [
-                {
-                  name: "role",
-                  type: "list",
-                  message: "What is their new role?",
-                  choices: function () {
-                    rolesArray = [];
-                    res.forEach(res => {
-                      rolesArray.push(
-                        res.title)
-                    })
-                    return rolesArray;
-                  }
-                }
-              ]
-            )
+        connection.query("SELECT * FROM role", (err, res) => {
+          if (err) throw err;
 
-            .then(function (rolesAnswer) {
-              const role = rolesAnswer.role;
+          inquirer.prompt({
+            name: "roleName",
+            type: "list",
+            message: "What is their new title?",
+            choices: function () {
+              var roleArray = [];
+              res.forEach(res => {
+                roleArray.push(
+                  `${res.id} ${res.title}`
+                );
+              })
+              return roleArray;
+            }
+          })
 
-              connection.query('SELECT * FROM role WHERE title = ?', [role], (err, res) => {
+            .then(() => {
+              let NameCode = parseInt(answer.chosenEmployee);
+              let newRole = answer.roleName
+
+              connection.query(`UPDATE employee SET role_id = ${newRole} WHERE id = ${NameCode}`, (err, res) => {
                 if (err) throw err;
-                let role_id = res[0].id;
 
-                connection.query('UPDATE employee SET role_id ? WHERE last_name', [role_id, last_name], (err, res, fields) => {
-                  console.log(`You have updated employee's role.`)
-                })
+                console.table(res);
 
                 start();
-              })
+              }
+              );
             })
         })
       })
   })
-};
-
-
-
-const deleteDepartment = () => {
-
-};
-
-
-
-const deleteRole = () => {
-
-};
-
-
-
-const deleteEmployee = () => {
-
-};
+}
