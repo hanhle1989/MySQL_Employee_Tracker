@@ -29,9 +29,6 @@ function start() {
       "Add a new role",
       "Add a new employee",
       "Update an employee role",
-      "Delete a department",
-      "Delete a role",
-      "Delete an employee",
       "Exit"
     ]
   })
@@ -51,12 +48,6 @@ function start() {
         addEmployee();
       } else if (answer.action === 'Update an employee role') {
         updateRole();
-      } else if (answer.action === 'Delete a department') {
-        deleteDepartment();
-      } else if (answer.action === 'Delete a role') {
-        deleteRole();
-      } else if (answer.action === 'Delete an employee') {
-        deleteEmployee();
       } else if (answer.action === 'Exit') {
         connection.end()
       }
@@ -184,6 +175,7 @@ const addRole = () => {
           }
           )
           let id = filteredDept[0].id;
+
           connection.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [answer.title, answer.salary, id], (err, res, fields) => {
             if (err) throw err
 
@@ -243,7 +235,6 @@ const addEmployee = () => {
         }
       ]
     )
-
       .then((answer) => {
         const role = answer.roleName;
         connection.query('SELECT * FROM role', (err, res) => {
@@ -252,6 +243,7 @@ const addEmployee = () => {
             return res.title == role;
           })
           let role_id = filteredRole[0].id;
+
           connection.query("SELECT * FROM employee", (err, res) => {
             inquirer.prompt([
               {
@@ -314,6 +306,7 @@ const updateRole = () => {
         }
       })
 
+
       .then((answer) => {
         connection.query("SELECT * FROM role", (err, res) => {
           if (err) throw err;
@@ -321,30 +314,38 @@ const updateRole = () => {
           inquirer.prompt({
             name: "roleName",
             type: "list",
-            message: "What is their new title?",
+            message: "What is the new employee's title?",
             choices: function () {
               var roleArray = [];
               res.forEach(res => {
                 roleArray.push(
-                  `${res.id} ${res.title}`
+                  res.title
                 );
               })
               return roleArray;
             }
           })
 
-            .then(() => {
-              let NameCode = parseInt(answer.chosenEmployee);
-              let newRole = answer.roleName
-
-              connection.query(`UPDATE employee SET role_id = ${newRole} WHERE id = ${NameCode}`, (err, res) => {
+            .then((response) => {
+              const role = response.roleName;
+              connection.query('SELECT * FROM role', (err, res) => {
                 if (err) throw err;
+                let filteredRole = res.filter((res) => {
+                  return res.title == role;
+                })
 
-                console.table(res);
+                let role_id = filteredRole[0].id;
 
-                start();
-              }
-              );
+                let nameCode = parseInt(answer.chosenEmployee)
+
+                connection.query(`UPDATE employee SET role_id = ${role_id} WHERE id = ${nameCode}`, (err, res) => {
+                  if (err) throw err;
+
+                  console.table(res);
+
+                  start();
+                })
+              })
             })
         })
       })
